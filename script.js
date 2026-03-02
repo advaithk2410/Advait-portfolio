@@ -137,7 +137,12 @@ document.querySelectorAll('.skills-grid .skill-card, .projects-grid .project-car
   card.style.transitionDelay = `${i * 0.05}s`;
 });
 
-/* ─── CONTACT FORM ─── */
+/* ─── CONTACT FORM (EmailJS) ─── */
+(function () {
+  // ⚠️ Replace with YOUR Public Key from: https://dashboard.emailjs.com/admin/account
+  emailjs.init("wh2vGncBpHkxt6ScK");
+})();
+
 async function handleFormSubmit(e) {
   e.preventDefault();
 
@@ -151,25 +156,28 @@ async function handleFormSubmit(e) {
   btn.disabled = true;
   success.classList.remove('visible', 'error');
 
+  const templateParams = {
+    from_name: name,
+    from_email: email,
+    message: message,
+    to_name: "Advait"
+  };
+
   try {
-    const res = await fetch('/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, message })
-    });
+    // ⚠️ Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your actual IDs
+    const res = await emailjs.send('service_u2x9y1r', 'template_l15hivc', templateParams);
 
-    const data = await res.json();
-
-    if (data.success) {
-      success.textContent = '✅ Message sent! Check your inbox for a confirmation email.';
+    if (res.status === 200) {
+      success.textContent = '✅ Message sent! I will get back to you soon.';
       success.style.color = '#10b981';
       success.classList.add('visible');
       document.getElementById('contactForm').reset();
       setTimeout(() => success.classList.remove('visible'), 6000);
     } else {
-      throw new Error(data.error || 'Failed to send');
+      throw new Error('Failed to send');
     }
   } catch (err) {
+    console.error('EmailJS Error:', err);
     success.textContent = '❌ Could not send message. Please email directly: advaithk24@gmail.com';
     success.style.color = '#ef4444';
     success.classList.add('visible');
