@@ -160,7 +160,8 @@ async function handleFormSubmit(e) {
     from_name: name,
     from_email: email,
     message: message,
-    to_name: "Advait"
+    to_name: "Advait",
+    to_email: "advaithk24@gmail.com"
   };
 
   try {
