@@ -139,7 +139,6 @@ document.querySelectorAll('.skills-grid .skill-card, .projects-grid .project-car
 
 /* ─── CONTACT FORM (EmailJS) ─── */
 (function () {
-  // ⚠️ Replace with YOUR Public Key from: https://dashboard.emailjs.com/admin/account
   emailjs.init("wh2vGncBpHkxt6ScK");
 })();
 
@@ -156,7 +155,8 @@ async function handleFormSubmit(e) {
   btn.disabled = true;
   success.classList.remove('visible', 'error');
 
-  const templateParams = {
+  // ── Params for the notification email TO Advait ──
+  const notifyParams = {
     from_name: name,
     from_email: email,
     message: message,
@@ -164,11 +164,23 @@ async function handleFormSubmit(e) {
     to_email: "advaithk24@gmail.com"
   };
 
+  // ── Params for the auto-reply email TO the sender ──
+  const replyParams = {
+    to_name: name,
+    to_email: email,
+    from_name: "Advait Kulkarni",
+    message: message
+  };
+
   try {
-    // ⚠️ Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your actual IDs
-    const res = await emailjs.send('service_u2x9y1r', 'template_l15hivc', templateParams);
+    // 1. Send notification email to Advait (existing template)
+    const res = await emailjs.send('service_u2x9y1r', 'template_l15hivc', notifyParams);
 
     if (res.status === 200) {
+      // 2. Send auto-reply to the person who contacted
+      // Auto-reply to the contacting person
+      await emailjs.send('service_u2x9y1r', 'template_eacx2ip', replyParams);
+
       success.textContent = '✅ Message sent! I will get back to you soon.';
       success.style.color = '#10b981';
       success.classList.add('visible');
